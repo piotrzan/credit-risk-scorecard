@@ -1,0 +1,280 @@
+{
+  "development": {
+    "years": "2010-2013",
+    "loans": 166459,
+    "bad_rate": 0.1239
+  },
+  "out_of_time": {
+    "year": 2014,
+    "loans": 153204,
+    "bad_rate": 0.1457,
+    "mean_pd": 0.1206
+  },
+  "information_value": {
+    "annual_inc": 0.0952,
+    "loan_to_income": 0.0437,
+    "dti": 0.0407,
+    "revol_util": 0.0384,
+    "home_ownership": 0.0318,
+    "inq_last_6mths": 0.0303,
+    "purpose": 0.0296,
+    "credit_history_months": 0.0186,
+    "emp_years": 0.0128,
+    "revol_bal": 0.0125,
+    "total_acc": 0.012,
+    "loan_amnt": 0.0056,
+    "verification_status": 0.0016,
+    "months_since_delinq": 0.0005,
+    "pub_rec": 0.0005,
+    "pub_rec_bankruptcies": 0.0004,
+    "open_acc": 0.0003,
+    "delinq_2yrs": 0.0002
+  },
+  "features": [
+    "annual_inc",
+    "loan_to_income",
+    "dti",
+    "revol_util",
+    "home_ownership",
+    "inq_last_6mths",
+    "purpose"
+  ],
+  "coefficients": {
+    "annual_inc": -0.81,
+    "loan_to_income": -0.533,
+    "dti": -0.462,
+    "revol_util": -1.069,
+    "home_ownership": -0.585,
+    "inq_last_6mths": -1.318,
+    "purpose": -1.027
+  },
+  "results": {
+    "scorecard_dev": {
+      "gini": 0.278,
+      "ks": 0.203
+    },
+    "scorecard_oot": {
+      "gini": 0.259,
+      "ks": 0.189
+    },
+    "gradient_boosting_oot": {
+      "gini": 0.301,
+      "ks": 0.218
+    },
+    "lending_club_grade_oot": {
+      "gini": 0.3,
+      "ks": 0.237
+    }
+  },
+  "calibration_oot": {
+    "1": {
+      "count": 15321,
+      "bads": 997,
+      "pd_mean": 0.0502,
+      "bad_rate": 0.0651,
+      "p_value": 0.0
+    },
+    "2": {
+      "count": 15320,
+      "bads": 1308,
+      "pd_mean": 0.0684,
+      "bad_rate": 0.0854,
+      "p_value": 0.0
+    },
+    "3": {
+      "count": 15320,
+      "bads": 1588,
+      "pd_mean": 0.0812,
+      "bad_rate": 0.1037,
+      "p_value": 0.0
+    },
+    "4": {
+      "count": 15321,
+      "bads": 1806,
+      "pd_mean": 0.0931,
+      "bad_rate": 0.1179,
+      "p_value": 0.0
+    },
+    "5": {
+      "count": 15320,
+      "bads": 1988,
+      "pd_mean": 0.1052,
+      "bad_rate": 0.1298,
+      "p_value": 0.0
+    },
+    "6": {
+      "count": 15320,
+      "bads": 2139,
+      "pd_mean": 0.1182,
+      "bad_rate": 0.1396,
+      "p_value": 0.0
+    },
+    "7": {
+      "count": 15321,
+      "bads": 2523,
+      "pd_mean": 0.133,
+      "bad_rate": 0.1647,
+      "p_value": 0.0
+    },
+    "8": {
+      "count": 15320,
+      "bads": 2738,
+      "pd_mean": 0.151,
+      "bad_rate": 0.1787,
+      "p_value": 0.0
+    },
+    "9": {
+      "count": 15320,
+      "bads": 3204,
+      "pd_mean": 0.1758,
+      "bad_rate": 0.2091,
+      "p_value": 0.0
+    },
+    "10": {
+      "count": 15321,
+      "bads": 4036,
+      "pd_mean": 0.2298,
+      "bad_rate": 0.2634,
+      "p_value": 0.0
+    }
+  },
+  "psi_score": 0.0041,
+  "psi_variables": {
+    "annual_inc": 0.0051,
+    "loan_to_income": 0.0022,
+    "dti": 0.0258,
+    "revol_util": 0.0249,
+    "home_ownership": 0.0052,
+    "inq_last_6mths": 0.0011,
+    "purpose": 0.0699
+  },
+  "lgd": 0.887,
+  "ead_share_of_amount": 0.578,
+  "expected_loss_2014_usd": 113487253,
+  "real_loss_2014_usd": 136255338,
+  "return_all_2014": 0.0828,
+  "by_decile_2014": {
+    "1": {
+      "bad_rate": 0.0651,
+      "interest": 0.0942,
+      "return": 0.0844
+    },
+    "2": {
+      "bad_rate": 0.0854,
+      "interest": 0.1052,
+      "return": 0.0936
+    },
+    "3": {
+      "bad_rate": 0.1037,
+      "interest": 0.1122,
+      "return": 0.0915
+    },
+    "4": {
+      "bad_rate": 0.1179,
+      "interest": 0.1179,
+      "return": 0.0888
+    },
+    "5": {
+      "bad_rate": 0.1298,
+      "interest": 0.1221,
+      "return": 0.0882
+    },
+    "6": {
+      "bad_rate": 0.1396,
+      "interest": 0.1273,
+      "return": 0.0875
+    },
+    "7": {
+      "bad_rate": 0.1647,
+      "interest": 0.1326,
+      "return": 0.0805
+    },
+    "8": {
+      "bad_rate": 0.1787,
+      "interest": 0.1375,
+      "return": 0.0789
+    },
+    "9": {
+      "bad_rate": 0.2091,
+      "interest": 0.1445,
+      "return": 0.0693
+    },
+    "10": {
+      "bad_rate": 0.2634,
+      "interest": 0.1587,
+      "return": 0.0537
+    }
+  },
+  "by_grade_2014": {
+    "A_riskier": {
+      "loans": 16398,
+      "bad_rate": 0.0719,
+      "return": 0.0706
+    },
+    "A_safer": {
+      "loans": 16397,
+      "bad_rate": 0.0435,
+      "return": 0.0742
+    },
+    "B_riskier": {
+      "loans": 25291,
+      "bad_rate": 0.1331,
+      "return": 0.0852
+    },
+    "B_safer": {
+      "loans": 25291,
+      "bad_rate": 0.0939,
+      "return": 0.0976
+    },
+    "C_riskier": {
+      "loans": 20750,
+      "bad_rate": 0.2108,
+      "return": 0.072
+    },
+    "C_safer": {
+      "loans": 20750,
+      "bad_rate": 0.1538,
+      "return": 0.0981
+    },
+    "D_riskier": {
+      "loans": 9720,
+      "bad_rate": 0.2698,
+      "return": 0.0579
+    },
+    "D_safer": {
+      "loans": 9720,
+      "bad_rate": 0.1989,
+      "return": 0.0922
+    },
+    "E_riskier": {
+      "loans": 3387,
+      "bad_rate": 0.328,
+      "return": 0.0432
+    },
+    "E_safer": {
+      "loans": 3387,
+      "bad_rate": 0.2389,
+      "return": 0.0847
+    },
+    "F_riskier": {
+      "loans": 970,
+      "bad_rate": 0.3454,
+      "return": 0.062
+    },
+    "F_safer": {
+      "loans": 970,
+      "bad_rate": 0.2608,
+      "return": 0.0992
+    },
+    "G_riskier": {
+      "loans": 87,
+      "bad_rate": 0.4138,
+      "return": 0.0815
+    },
+    "G_safer": {
+      "loans": 86,
+      "bad_rate": 0.3488,
+      "return": 0.0777
+    }
+  }
+}

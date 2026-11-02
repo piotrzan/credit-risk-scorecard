@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<title>Model ryzyka kredytowego (PD)</title>
+<style>
+  @page { size: A4; margin: 15mm 16mm 14mm 16mm; }
+  * { box-sizing: border-box; }
+  body { font-family: "Inter", sans-serif; font-size: 9.4pt; line-height: 1.42; color: #1f2a33; margin: 0; }
+  h1 { font-size: 17pt; line-height: 1.2; margin: 0 0 4px; letter-spacing: -0.01em; }
+  .sub { color: #56636d; font-size: 9.2pt; margin-bottom: 12px; }
+  h2 { break-after: avoid; font-size: 11pt; color: #2459d6; margin: 16px 0 6px; padding-bottom: 3px; border-bottom: 1px solid #d5dde3; }
+  p { margin: 0 0 7px; }
+  ul { margin: 0 0 7px; padding-left: 16px; }
+  li { margin-bottom: 3px; }
+  .key { background: #eef3fb; border-left: 3px solid #2459d6; padding: 9px 12px; margin: 4px 0 6px; }
+  .key ul { margin: 0; }
+  table { border-collapse: collapse; width: 100%; margin: 4px 0 8px; font-size: 9pt; font-variant-numeric: tabular-nums; }
+  th, td { padding: 4px 6px; border-bottom: 1px solid #e3e8ec; text-align: right; }
+  th:first-child, td:first-child { text-align: left; }
+  th { color: #56636d; font-weight: 600; border-bottom: 1px solid #b9c4cc; }
+  tr.best td { font-weight: 600; }
+  figure { margin: 6px 0 10px; break-inside: avoid; }
+  figure img { width: 100%; display: block; }
+  figcaption { font-size: 8.4pt; color: #56636d; margin-top: 3px; }
+  .two { display: flex; gap: 12px; }
+  .two figure { flex: 1; min-width: 0; }
+  .note { font-size: 8.4pt; color: #56636d; }
+  .pb { break-before: page; }
+  .foot { margin-top: 12px; font-size: 8.4pt; color: #56636d; border-top: 1px solid #d5dde3; padding-top: 6px; }
+</style>
+</head>
+<body>
+<h1>Model ryzyka kredytowego (PD) dla kredytów konsumpcyjnych</h1>
+<div class="sub">Piotr Żandarski · listopad 2026 · dane: Lending Club, kredyty 36-miesięczne z lat 2010–2014<br>Kod i&nbsp;pełny opis: github.com/piotrzan/credit-risk-scorecard · piotrzan.github.io · piotrzandarski314@gmail.com</div>
+
+<div class="key">
+  <ul>
+    <li>Karta scoringowa z&nbsp;7 zmiennych osiąga Gini 25,9% na kredytach z&nbsp;2014 r., których nie widziała przy budowie (27,8% na próbie modelowej). Rozkład punktów jest stabilny (PSI&nbsp;=&nbsp;0,004).</li>
+    <li>Model zaniża ryzyko w&nbsp;2014 r.: przewiduje 12,1% niespłaconych kredytów, a&nbsp;było 14,6%. Przed użyciem trzeba go skalibrować na nowszych danych.</li>
+    <li>Przy podobnym oprocentowaniu model rozdziela klientów na lepszych i&nbsp;gorszych. W&nbsp;kategorii C platformy: 15,4% kontra 21,1% niespłaconych, zwrot 9,8% kontra 7,2%.</li>
+    <li>Najbardziej ryzykowne 10% klientów daje zwrot 5,4%, choć płaci najwyższe oprocentowanie. Ich ryzyko jest za tanio wycenione.</li>
+  </ul>
+</div>
+
+<h2>1. Cel</h2>
+<p>Bank albo platforma pożyczkowa musi przy każdym wniosku ocenić prawdopodobieństwo, że klient nie spłaci kredytu (PD). Zbudowałem kartę scoringową tak, jak robi się to w&nbsp;bankach, sprawdziłem ją na danych z&nbsp;późniejszego okresu i&nbsp;oceniłem, co jej wyniki oznaczają dla zysku z&nbsp;portfela.</p>
+
+<h2>2. Dane</h2>
+<p>Rzeczywiste kredyty z&nbsp;platformy Lending Club (USA), 36-miesięczne, z&nbsp;ostatecznym statusem. Klient „zły” to kredyt spisany na straty, w&nbsp;niewypłacalności albo z&nbsp;opóźnieniem powyżej 30 dni. Do modelu biorę tylko informacje znane w&nbsp;dniu złożenia wniosku.</p>
+<table>
+  <tr><th>Próba</th><th>Lata</th><th>Kredyty</th><th>Odsetek niespłaconych</th></tr>
+  <tr><td>Modelowa</td><td>2010–2013</td><td>166&nbsp;459</td><td>12,4%</td></tr>
+  <tr><td>Test out-of-time</td><td>2014</td><td>153&nbsp;204</td><td>14,6%</td></tr>
+</table>
+
+<h2>3. Metoda</h2>
+<ul>
+  <li>Zmienne liczbowe dzielę na przedziały i&nbsp;łączę je, aż odsetek złych klientów zmienia się w&nbsp;jednym kierunku. Rzadkie kategorie łączę w&nbsp;„inne”.</li>
+  <li>Dla każdego przedziału liczę WoE = ln(udział dobrych / udział złych), a&nbsp;dla zmiennej IV. Biorę zmienne z&nbsp;IV ≥ 0,02, a&nbsp;z&nbsp;dwóch mocno skorelowanych silniejszą.</li>
+  <li>Regresja logistyczna na WoE; wszystkie współczynniki mają ten sam znak.</li>
+  <li>Punkty: 600 punktów to szansa spłaty 50:1, każde 20 punktów więcej podwaja szansę.</li>
+  <li>Walidacja na 2014 r.: Gini, KS, kalibracja w&nbsp;10 grupach z&nbsp;testem dwumianowym, PSI. Dla porównania gradient boosting i&nbsp;rating samej platformy.</li>
+</ul>
+<figure style="width:62%">
+  <img src="figures/information_value.png" alt="">
+  <figcaption>Rys. 1. Siła zmiennych (IV). Do modelu weszło 7 z&nbsp;18. Zmienne o&nbsp;dawnych opóźnieniach i&nbsp;upadłościach prawie nic nie mówią, bo platforma odrzucała wnioski z&nbsp;poważnymi problemami.</figcaption>
+</figure>
+
+<h2>4. Walidacja</h2>
+<table>
+  <tr><th>Model</th><th>Gini</th><th>KS</th></tr>
+  <tr><td>Karta scoringowa, próba modelowa 2010–2013</td><td>27,8%</td><td>0,20</td></tr>
+  <tr class="best"><td>Karta scoringowa, test 2014</td><td>25,9%</td><td>0,19</td></tr>
+  <tr><td>Gradient boosting, test 2014</td><td>30,1%</td><td>0,22</td></tr>
+  <tr><td>Rating Lending Club, test 2014 (korzysta też z&nbsp;oceny FICO)</td><td>30,0%</td><td>0,24</td></tr>
+</table>
+<ul>
+  <li>Moc modelu spada na nowych danych tylko o&nbsp;1,9 pkt proc. Rozkład punktów się nie zmienia (PSI 0,004), a&nbsp;najbardziej zmieniła się struktura celów kredytu (PSI 0,07, poniżej progu 0,1).</li>
+  <li>Kalibracja się nie zgadza: w&nbsp;każdej z&nbsp;10 grup rzeczywisty odsetek niespłaconych jest wyższy niż przewidywany (test dwumianowy, p&nbsp;&lt;&nbsp;0,001). Kolejność klientów jest dobra, ale poziom ryzyka w&nbsp;2014 r. wzrósł.</li>
+</ul>
+<div class="two">
+  <figure><img src="figures/gini.png" alt=""><figcaption>Rys. 2. Gini modeli.</figcaption></figure>
+  <figure><img src="figures/calibration.png" alt=""><figcaption>Rys. 3. Przewidywany i&nbsp;rzeczywisty odsetek niespłaconych w&nbsp;10 grupach klientów.</figcaption></figure>
+</div>
+
+<h2>5. Strata oczekiwana</h2>
+<p>Z&nbsp;niespłaconych kredytów z&nbsp;lat 2010–2013: w&nbsp;chwili niewypłacalności do spłaty zostaje średnio 58% pożyczonej kwoty (EAD), a&nbsp;z&nbsp;tej kwoty nie udaje się odzyskać 89% (LGD, kredyty bez zabezpieczenia). Strata oczekiwana na 2014 r. (PD × LGD × EAD) wynosi 113,5 mln USD, a&nbsp;rzeczywista 136,3 mln USD. Niedoszacowanie o&nbsp;17% wynika z&nbsp;zaniżonego PD.</p>
+
+<h2>6. Co to znaczy dla zysku</h2>
+<p>Zwrot liczę jako sumę wpłat klientów minus pożyczona kwota, podzieloną przez pożyczoną kwotę. Cały portfel z&nbsp;2014 r. dał 8,3%.</p>
+<ul>
+  <li>Każda grupa klientów przynosi zysk, więc odrzucanie wniosków nie zwiększyłoby zysku. Zwrot spada jednak wyraźnie wraz z&nbsp;ryzykiem: z&nbsp;8–9% w&nbsp;większości grup do 5,4% w&nbsp;najbardziej ryzykownej, mimo że ci klienci płacą średnio 15,9% odsetek.</li>
+  <li>W&nbsp;każdej kategorii ratingu platformy model odróżnia lepszą i&nbsp;gorszą połowę klientów. W&nbsp;kategorii E różnica jest największa: 23,9% kontra 32,8% niespłaconych, zwrot 8,5% kontra 4,3%.</li>
+  <li>Wniosek: wynik modelu warto dodać do ustalania ceny kredytu, a&nbsp;dla najbardziej ryzykownej grupy podnieść oprocentowanie albo obniżyć kwotę.</li>
+</ul>
+<figure style="width:88%"><img src="figures/return_by_risk.png" alt=""><figcaption>Rys. 4. Po lewej zwrot według grup ryzyka z&nbsp;modelu, po prawej odsetek niespłaconych w&nbsp;bezpieczniejszej i&nbsp;ryzykowniejszej połowie każdej kategorii ratingu.</figcaption></figure>
+
+<h2>7. Ograniczenia</h2>
+<ul>
+  <li>Dane zawierają tylko kredyty udzielone. Nie wiadomo, jak spłacaliby odrzuceni klienci (reject inference), więc model może źle oceniać osoby spoza tej grupy.</li>
+  <li>Brak oceny z&nbsp;biura kredytowego (FICO), w&nbsp;praktyce jednej z&nbsp;najsilniejszych zmiennych.</li>
+  <li>Zwrot nie uwzględnia wartości pieniądza w&nbsp;czasie ani kosztów obsługi kredytu.</li>
+</ul>
+</body>
+</html>
